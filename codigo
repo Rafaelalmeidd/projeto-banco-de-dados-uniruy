@@ -1,0 +1,108 @@
+INSERT INTO users (nome, email, senha, telefone) VALUES
+('João Silva', 'joao.silva@gmail.com', 'joao123', '11987654321'),
+('Maria Oliveira', 'maria.oliveira@gmail.com', 'maria123', '11987654322'),
+('Pedro Santos', 'pedro.santos@gmail.com', 'pedro789', '11987654323');
+
+INSERT INTO hoteis (nome, endereco, descricao) VALUES
+('Hotel Extase', 'Av. das Flores, 123', 'Um hotel com vista para o mar e otima estadia com a familia.'),
+('Hotel Central', 'Rua das dores, 456', 'Hotel no centro da cidade.'),
+('Hotel Riomar', 'Estrada da paz, 789', 'Um hotel com vista maravilhosa.');
+
+INSERT INTO quartos (id_hotel, tipo, preco, disponibilidade) VALUES
+(1, 'Quarto Simples', 'R$ 100,00', 'Disponível'),
+(1, 'Suíte Luxo', 'R$ 250,00', 'Disponível'),
+(2, 'Quarto Duplo', 'R$ 150,00', 'Não disponível'),
+(3, 'Quarto Família', 'R$ 200,00', 'Disponível');
+
+INSERT INTO reservas (id_user, id_quarto, data_checkin, data_checkout, num_hospedes) VALUES
+(1, 1, '2024-11-10 14:00:00', '2024-11-12 12:00:00', 1),
+(2, 2, '2024-11-11 14:00:00', '2024-11-13 12:00:00', 2);
+
+INSERT INTO comentarios (id_quarto, id_user, conteudo) VALUES
+(1, 1, 'Ótima estadia! Quarto muito confortável.'),
+(2, 2, 'A suíte é maravilhosa, com uma vista incrível!');
+
+INSERT INTO avaliacoes (id_quarto, id_user, classificacao, comentario) VALUES
+(1, 1, 5, 'Excelente!'),
+(2, 2, 4, 'Muito bom, mas poderia ter mais opções de alimentação.');
+
+SELECT * FROM users;
+SELECT * FROM hoteis;
+SELECT * FROM quartos;
+SELECT * FROM reservas;
+SELECT * FROM comentarios;
+SELECT * FROM avaliacoes;
+
+CREATE DATABASE IF NOT EXISTS hotel_reservas;
+
+USE hotel_reservas;
+
+CREATE TABLE users (
+  id_user int NOT NULL AUTO_INCREMENT,
+  nome varchar(50) NOT NULL,
+  email varchar(100) NOT NULL,
+  senha varchar(255) NOT NULL,
+  telefone varchar(15),
+  PRIMARY KEY (id_user),
+  UNIQUE KEY email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE hoteis (
+  id_hotel int NOT NULL AUTO_INCREMENT,
+  nome varchar(100) NOT NULL,
+  endereco varchar(255) NOT NULL,
+  descricao text,
+  PRIMARY KEY (id_hotel)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE quartos (
+  id_quarto int NOT NULL AUTO_INCREMENT,
+  id_hotel int NOT NULL,
+  tipo varchar(50) NOT NULL,  -- Ex: "Quarto Simples", "Suíte"
+  preco varchar(50) NOT NULL,  -- Preço por noite
+  disponibilidade varchar(50) NOT NULL,  -- Disponível ou não
+  PRIMARY KEY (id_quarto),
+  KEY id_hotel (id_hotel),
+  CONSTRAINT quartos_ibfk_1 FOREIGN KEY (id_hotel) REFERENCES hoteis (id_hotel) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE reservas (
+  id_reserva int NOT NULL AUTO_INCREMENT,
+  id_user int NOT NULL,
+  id_quarto int NOT NULL,
+  data_checkin DATETIME NOT NULL,
+  data_checkout DATETIME NOT NULL,
+  num_hospedes int NOT NULL,
+  PRIMARY KEY (id_reserva),
+  KEY id_user (id_user),
+  KEY id_quarto (id_quarto),
+  CONSTRAINT reservas_ibfk_1 FOREIGN KEY (id_user) REFERENCES users (id_user) ON DELETE CASCADE,
+  CONSTRAINT reservas_ibfk_2 FOREIGN KEY (id_quarto) REFERENCES quartos (id_quarto) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE comentarios (
+  id_comentario int NOT NULL AUTO_INCREMENT,
+  id_quarto int NOT NULL,
+  id_user int NOT NULL,
+  conteudo text NOT NULL,
+  data_comentario DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_comentario),
+  KEY id_quarto (id_quarto),
+  KEY id_user (id_user),
+  CONSTRAINT comentarios_ibfk_1 FOREIGN KEY (id_quarto) REFERENCES quartos (id_quarto) ON DELETE CASCADE,
+  CONSTRAINT comentarios_ibfk_2 FOREIGN KEY (id_user) REFERENCES users (id_user) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE avaliacoes (
+  id_avaliacao int NOT NULL AUTO_INCREMENT,
+  id_quarto int NOT NULL,
+  id_user int NOT NULL,
+  classificacao int NOT NULL CHECK (classificacao BETWEEN 1 AND 5),
+  comentario text,
+  data_avaliacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_avaliacao),
+  KEY id_quarto (id_quarto),
+  KEY id_user (id_user),
+  CONSTRAINT avaliacoes_ibfk_1 FOREIGN KEY (id_quarto) REFERENCES quartos (id_quarto) ON DELETE CASCADE,
+  CONSTRAINT avaliacoes_ibfk_2 FOREIGN KEY (id_user) REFERENCES users (id_user) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
