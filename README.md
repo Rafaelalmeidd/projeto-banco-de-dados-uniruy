@@ -7,7 +7,7 @@ Este repositório contém o projeto da disciplina Banco de Dados (ARA0040/Turma 
 INTEGRANTES DA EQUIPE
 
 Kawã Rafael Almeida de Souza(Criador do repositório);                                                                                                                                              
-Icaro Oliveira Sant'Anna(Colaborador)
+Icaro Sant Anna de Oliveira(Colaborador)
 
 FERRAMENTAS UTILIZADAS
 
